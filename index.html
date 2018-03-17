@@ -7,29 +7,55 @@
     <title>Chuck Facts</title>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-   
+   <style>
+       .highlight {
+           background: rgb(230, 250, 51)
+       }
+       .info {
+           background: rgb(248, 246, 246)
+       }
+   </style>
 </head>
 <body> 
     <div id="chuck" class="container-fluid">
-        <h1>{{appName}}</h1>
-        <div class="row">
+        <div class="jumbotron jumbotron-fluid">
+            <div class="container">
+                <h1 class="display-4">{{appName}}</h1>
+                <hr class="my-4">
+                <p class="lead">Get a random Chuck Norris fact or search for a phrase!</p>
+            </div>
+        </div>
+        <div class="row, container">
             <!--Left-side Search Queery-->
             <div class="col-lg-6">
                 <select v-model="choice">
                     <option value=''>Any</option>
-                    <span v-if="categories.length">{{categories[0]}}</span>
                     <option v-for="category in categories">
                         {{category}}
                     </option>
                 </select>
-                <span>Selected: {{choice}}</span>
-                <button v-on:click="retrieveFact">Get <span style="color:cadetblue">hskjhf </span> fact</button>
-                <p>{{randFact}}</p>
+                <button v-on:click="retrieveFact" class="btn btn-primary">Get fact</button>
+                <template v-if="factDisplayed">
+                    <h5 v-show="isFetching">Fetching...</h5>
+                    <h4>Displaying a fact</h4>
+                </template>
+                <!-- <h4 v-if="factDisplayed">Search Results</h4> -->
+                
+                <p v-if="factDisplayed" class="info">{{randFact}}</p>
             </div>
             <!--Right-side Search Queery-->
             <div class="col-lg-6">
                 <input type="text" v-model="query" placeholder="Enter a keyword/phrase to search for">
-                <button v-on:click="retrieveList">Search</button>
+                <button v-on:click="retrieveList" class="btn btn-primary">Search</button>
+                <template v-if="listDisplayed">
+                    <h5 v-show="isFetching">Fetching...</h5>
+                    <h4>Search Results</h4>
+                </template>
+                <!-- <h4 v-if="listDisplayed">Search Results</h4> -->
+                
+                <ol v-if="listDisplayed" class="info">
+                    <li v-for="obj in list" v-html="$options.filters.highlight(obj, query)"></li>
+                </ol>
             </div>
         </div>
     

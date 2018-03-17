@@ -7,14 +7,18 @@ let chuck = new Vue ({
         randFact: '',
         choice: '',
         query: '',
-        categories: ["hi", "bye"]
+        factDisplayed: false,
+        listDisplayed: false,
+        isFetching: false,
+        list: [],
+        categories: []
+
     },
 
     methods: {
         getCategories () {
 
             let viewModel = this
-            console.log(this.appName)
 
             axios.get('https://api.chucknorris.io/jokes/categories', {
                 headers: {
@@ -22,11 +26,7 @@ let chuck = new Vue ({
                 }
             })
             .then((response) => {
-                console.log(response)
                 viewModel.categories = response.data
-                console.log(viewModel.categories)
-                viewModel.randFact = response.data[0]
-                console.log(viewModel.appName)
             })
             .catch((err) => {
                 alert(err)
@@ -35,7 +35,8 @@ let chuck = new Vue ({
         },
         retrieveFact () {
             let vm = this
-            console.log(this.appName)
+            vm.listDisplayed = false
+            vm.isFetching = true
 
             axios.get(`https://api.chucknorris.io/jokes/random?category=${vm.choice}`, {
                 headers: {
@@ -43,6 +44,9 @@ let chuck = new Vue ({
                 }
             })
             .then((response) => {
+                vm.isFetching = false
+                vm.factDisplayed = true
+                vm.isFetching = false
                 vm.randFact = response.data.value
             })
             .catch((err) => {
@@ -51,25 +55,34 @@ let chuck = new Vue ({
         },
         retrieveList () {
             let vm = this
-            console.log(this.appName)
 
-            axios.get(`https://api.chucknorris.io/jokes/search?query=${query}`, {
-                headers: {
-                    Accept: 'application/json'
-                }
-            })
-            .then((response) => {
-                vm.randFact = response.data.value
-            })
-            .catch((err) => {
-                alert(err)
-            })
+            if (vm.query) {
+                vm.isFetching = true
+                vm.factDisplayed = false
+                axios.get(`https://api.chucknorris.io/jokes/search?query=${vm.query}`, {
+                    headers: {
+                        Accept: 'application/json'
+                    }
+                })
+                .then((response) => {
+                    vm.isFetching = false
+                    vm.listDisplayed = true
+                    vm.list = response.data.result
+                })
+                .catch((err) => {
+                    alert(err)
+                })
+            }
         }
     },
     filters: {
-        highlight: (phrase) => {
-            if(!phrase) return ''
-            let result
+        highlight: (phrase, match) => {
+            let val = phrase.value
+            if(!val) return ''
+            console.log(match)
+            return output = val.replace(new RegExp(match, "ig"), function (result) {
+                return "<span class='highlight'>" + result + "</span>"
+            })
         }
     },
     beforeMount() {
