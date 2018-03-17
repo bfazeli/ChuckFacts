@@ -19,10 +19,19 @@
 <body> 
     <div id="chuck" class="container-fluid">
         <div class="jumbotron jumbotron-fluid">
-            <div class="container">
-                <h1 class="display-4">{{appName}}</h1>
-                <hr class="my-4">
-                <p class="lead">Get a random Chuck Norris fact or search for a phrase!</p>
+            <div class="row, container">
+                <div class="col-lg-6">
+                    <br><br>
+                    <h1 class="display-4">{{appName}}</h1>
+                    <hr class="my-4">
+                    <p class="lead">Get a random Chuck Norris fact or search for a phrase!</p>
+                    <br>
+                    <h4 v-if="history.length">Search History: <span class="text-info">{{historyAsString}}</span> </h4>
+                    <h5 v-show="isFetching">Fetching...</h5>
+                </div>
+                <div class="col-lg-6">
+                    <img style="width:45%"src="img/Chuck_Norris.png" alt="An image of Chuck Norris">
+                </div>
             </div>
         </div>
         <div class="row, container">
@@ -35,30 +44,22 @@
                     </option>
                 </select>
                 <button v-on:click="retrieveFact" class="btn btn-primary">Get fact</button>
-                <template v-if="factDisplayed">
-                    <h5 v-show="isFetching">Fetching...</h5>
-                    <h4>Displaying a fact</h4>
-                </template>
-                <!-- <h4 v-if="factDisplayed">Search Results</h4> -->
+                <h4 v-if="factDisplayed">Displaying a Chuck Norris {{factAbout}} fact</h4>
                 
                 <p v-if="factDisplayed" class="info">{{randFact}}</p>
             </div>
+            
             <!--Right-side Search Queery-->
             <div class="col-lg-6">
                 <input type="text" v-model="query" placeholder="Enter a keyword/phrase to search for">
                 <button v-on:click="retrieveList" class="btn btn-primary">Search</button>
-                <template v-if="listDisplayed">
-                    <h5 v-show="isFetching">Fetching...</h5>
-                    <h4>Search Results</h4>
-                </template>
-                <!-- <h4 v-if="listDisplayed">Search Results</h4> -->
-                
+                <h4 v-if="listDisplayed">Displaying {{list.length}} Search Result(s)</h4>
+                <h4 v-if="queryIsTooShort" class="text-danger">{{lengthErr}}</h4>
                 <ol v-if="listDisplayed" class="info">
                     <li v-for="obj in list" v-html="$options.filters.highlight(obj, query)"></li>
                 </ol>
             </div>
         </div>
-    
     </div>
     
     <script type="text/javascript" src="https://unpkg.com/vue"></script>
